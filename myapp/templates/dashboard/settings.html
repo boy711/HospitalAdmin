@@ -1,0 +1,81 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Settings - MedCenter{% endblock %}
+
+{% block dash_content %}
+<div class="dash-content">
+    <div class="page-header" style="margin-bottom:24px;">
+        <h1>Settings</h1>
+        <p>System preferences and account settings</p>
+    </div>
+
+    <div class="table-card" style="max-width:640px; margin-bottom:20px;">
+        <div class="table-card-header"><h3>Account</h3></div>
+        <div style="padding:8px 0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--border-color);">
+                <div>
+                    <div style="font-weight:500; color:var(--text-color); font-size:14px;">{{ request.user.get_full_name|default:request.user.username }}</div>
+                    <div style="font-size:12px; color:var(--black-light-color);">{{ request.user.email|default:"No email set" }}</div>
+                </div>
+                <a href="{% url 'profile' %}" class="btn-primary" style="padding:7px 14px; font-size:13px;">
+                    <i class="uil uil-edit"></i> Edit Profile
+                </a>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border-color);">
+                <span style="color:var(--black-light-color); font-size:14px;">Username</span>
+                <span style="font-weight:600; color:var(--text-color); font-size:14px;">{{ request.user.username }}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:14px 0;">
+                <span style="color:var(--black-light-color); font-size:14px;">Role</span>
+                <span class="badge badge-blue">Administrator</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card" style="max-width:640px; margin-bottom:20px;">
+        <div class="table-card-header"><h3>Appearance</h3></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
+            <div>
+                <div style="font-weight:500; color:var(--text-color); font-size:14px;">Dark Mode</div>
+                <div style="font-size:12px; color:var(--black-light-color);">Toggle between light and dark theme</div>
+            </div>
+            <div class="mode-toggle" id="modeToggle" style="position:relative; right:auto;">
+                <span class="switch"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card" style="max-width:640px; margin-bottom:20px;">
+        <div class="table-card-header"><h3>Security</h3></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0;">
+            <div>
+                <div style="font-weight:500; color:var(--text-color); font-size:14px;">Password</div>
+                <div style="font-size:12px; color:var(--black-light-color);">Change your account password</div>
+            </div>
+            <a href="{% url 'password_change' %}" class="btn-secondary" style="font-size:13px;">
+                <i class="uil uil-lock-alt"></i> Change Password
+            </a>
+        </div>
+    </div>
+
+    <div class="table-card" style="max-width:640px; margin-bottom:20px;">
+        <div class="table-card-header"><h3>System Info</h3></div>
+        <div style="padding:8px 0;">
+            <div style="display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border-color);">
+                <span style="color:var(--black-light-color); font-size:14px;">System</span>
+                <span style="color:var(--text-color); font-size:14px;">MedCenter Hospital Management</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:14px 0;">
+                <span style="color:var(--black-light-color); font-size:14px;">Version</span>
+                <span class="badge badge-green">v1.0.0</span>
+            </div>
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'logout' %}" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary" style="background:#ef4444;" onclick="return confirm('Are you sure you want to logout?')">
+            <i class="uil uil-sign-out-alt"></i> Logout
+        </button>
+    </form>
+</div>
+{% endblock %}

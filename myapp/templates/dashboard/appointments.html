@@ -1,0 +1,101 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Appointments - MedCenter{% endblock %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="page-header-row">
+        <div class="page-header">
+            <h1>Appointment Scheduling</h1>
+            <p>Manage and schedule patient appointments</p>
+        </div>
+        <a href="{% url 'appointment_add' %}" class="btn-primary">
+            <i class="uil uil-calendar-alt"></i> New Appointment
+        </a>
+    </div>
+
+    <div class="stats-row-4">
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Total Scheduled</span>
+                <span class="stat-value">{{ total_scheduled }}</span>
+            </div>
+            <div class="stat-icon icon-blue"><i class="uil uil-calendar-alt"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Completed</span>
+                <span class="stat-value">{{ total_completed }}</span>
+            </div>
+            <div class="stat-icon icon-green"><i class="uil uil-check-circle"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Cancelled</span>
+                <span class="stat-value">{{ total_cancelled }}</span>
+            </div>
+            <div class="stat-icon icon-orange"><i class="uil uil-times-circle"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Today</span>
+                <span class="stat-value">{{ today_count }}</span>
+            </div>
+            <div class="stat-icon icon-purple"><i class="uil uil-clock"></i></div>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-tabs">
+            <a href="?status=all" class="filter-tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+            <a href="?status=scheduled" class="filter-tab {% if status_filter == 'scheduled' %}active{% endif %}">Scheduled</a>
+            <a href="?status=completed" class="filter-tab {% if status_filter == 'completed' %}active{% endif %}">Completed</a>
+            <a href="?status=cancelled" class="filter-tab {% if status_filter == 'cancelled' %}active{% endif %}">Cancelled</a>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Appointments</h3>
+            <p>Total: {{ appointments|length }}</p>
+        </div>
+
+        {% for appt in appointments %}
+        <div class="staff-row">
+            <div class="staff-row-info">
+                <div class="staff-row-name">{{ appt.patient.name }}</div>
+                <div class="staff-row-title">{{ appt.get_appointment_type_display }} • {% if appt.doctor %}Dr. {{ appt.doctor.name }}{% else %}Unassigned{% endif %}</div>
+            </div>
+            <div class="staff-row-contact">
+                <span><i class="uil uil-calendar-alt"></i>{{ appt.date|date:"Y-m-d" }}</span>
+                <span><i class="uil uil-clock"></i>{{ appt.time|time:"g:i A" }}</span>
+            </div>
+            <div class="staff-row-status">
+                {% if appt.status == "scheduled" %}
+                    <span class="badge badge-blue">Scheduled</span>
+                {% elif appt.status == "completed" %}
+                    <span class="badge badge-green">Completed</span>
+                {% else %}
+                    <span class="badge badge-red">Cancelled</span>
+                {% endif %}
+            </div>
+            <form method="post" action="{% url 'appointment_delete' appt.pk %}" onsubmit="return confirm('Delete this appointment?');">
+                {% csrf_token %}
+                <button type="submit" class="action-delete" title="Delete"><i class="uil uil-trash-alt"></i></button>
+            </form>
+        </div>
+        {% empty %}
+        <p class="cell-muted" style="text-align:center; padding:30px;">No appointments found.</p>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

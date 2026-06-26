@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    <div class="page-header">
+        <h1>Confirm Delete</h1>
+        <p>This action cannot be undone</p>
+    </div>
+
+    <div class="form-card">
+        <p style="margin-bottom: 20px; color: var(--text-color);">
+            Are you sure you want to delete <strong>{{ object }}</strong> ({{ type }})?
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn-primary" style="background-color:#dc2626;">Yes, Delete</button>
+                <a href="javascript:history.back()" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

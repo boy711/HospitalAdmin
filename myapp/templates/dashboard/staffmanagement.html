@@ -1,0 +1,86 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Staff Management - MedCenter{% endblock %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    {% if messages %}
+        {% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
+    {% endif %}
+
+    <div class="page-header-row">
+        <div class="page-header">
+            <h1>Staff Management</h1>
+            <p>Manage hospital staff and personnel</p>
+        </div>
+        <a href="{% url 'staff_add' %}" class="btn-primary">
+            <i class="uil uil-plus"></i> Add Staff Member
+        </a>
+    </div>
+
+    <div class="stats-row-4">
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Total Staff</span><span class="stat-value">{{ total_staff }}</span></div>
+            <div class="stat-icon icon-blue"><i class="uil uil-users-alt"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Doctors</span><span class="stat-value">{{ doctors_count }}</span></div>
+            <div class="stat-icon icon-green"><i class="uil uil-user-md"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Nurses</span><span class="stat-value">{{ nurses_count }}</span></div>
+            <div class="stat-icon icon-purple"><i class="uil uil-user-nurse"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Support Staff</span><span class="stat-value">{{ support_count }}</span></div>
+            <div class="stat-icon icon-orange"><i class="uil uil-user"></i></div>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <form method="get" class="filter-search">
+            <i class="uil uil-search"></i>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search staff by name or department...">
+        </form>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Staff Directory</h3>
+            <p>Total members: {{ total_staff }}</p>
+        </div>
+
+        {% for member in staff_list %}
+        <div class="staff-row">
+            <div class="staff-row-info">
+                <div class="staff-row-name">{{ member.name }}</div>
+                <div class="staff-row-title">{{ member.title }}</div>
+                <div class="staff-row-meta">
+                    {{ member.department }} &nbsp;·&nbsp; Started: {{ member.start_date|date:"Y-m-d" }}
+                </div>
+            </div>
+            <div class="staff-row-contact">
+                <span><i class="uil uil-envelope"></i>{{ member.email }}</span>
+                <span><i class="uil uil-phone"></i>{{ member.phone }}</span>
+            </div>
+            <div class="staff-row-status">
+                {% if member.status == "active" %}
+                    <span class="badge badge-green">Active</span>
+                {% else %}
+                    <span class="badge badge-gray">Inactive</span>
+                {% endif %}
+            </div>
+            <div class="row-actions">
+                <a href="{% url 'staff_edit' member.pk %}" class="action-edit" title="Edit"><i class="uil uil-pen"></i></a>
+                <form method="post" action="{% url 'staff_delete' member.pk %}" onsubmit="return confirm('Delete this staff member?');" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="action-delete" title="Delete"><i class="uil uil-trash-alt"></i></button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+        <p class="cell-muted" style="text-align:center; padding:30px;">No staff members found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

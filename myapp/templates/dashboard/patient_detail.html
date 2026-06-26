@@ -1,0 +1,33 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    <div class="page-header">
+        <h1>{{ patient.name }}</h1>
+        <p>Patient record details</p>
+    </div>
+
+    <div class="form-card">
+        <div class="form-row">
+            <div class="form-group"><label>Email</label><p>{{ patient.email }}</p></div>
+            <div class="form-group"><label>Phone</label><p>{{ patient.phone }}</p></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Age</label><p>{{ patient.age }}</p></div>
+            <div class="form-group"><label>Blood Type</label><p>{{ patient.blood_type }}</p></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group"><label>Last Visit</label><p>{{ patient.last_visit|date:"Y-m-d" }}</p></div>
+            <div class="form-group"><label>Status</label><p>{{ patient.get_status_display }}</p></div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'patient_edit' patient.pk %}" class="btn-primary">Edit Patient</a>
+            <a href="{% url 'patients' %}" class="btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

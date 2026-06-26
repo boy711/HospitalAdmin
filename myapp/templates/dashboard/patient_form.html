@@ -1,0 +1,62 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    <div class="page-header">
+        <h1>{{ action }} Patient</h1>
+        <p>{% if action == "Add" %}Create a new patient record{% else %}Update patient information{% endif %}</p>
+    </div>
+
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    {{ form.age }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    {{ form.phone }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Blood Type</label>
+                    {{ form.blood_type }}
+                </div>
+                <div class="form-group">
+                    <label>Last Visit</label>
+                    {{ form.last_visit }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                {{ form.status }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Patient</button>
+                <a href="{% url 'patients' %}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

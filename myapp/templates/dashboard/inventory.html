@@ -1,0 +1,111 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Inventory - MedCenter{% endblock %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    {% if messages %}
+        {% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
+    {% endif %}
+
+    <div class="page-header-row">
+        <div class="page-header">
+            <h1>Medical Inventory</h1>
+            <p>Manage medical supplies and equipment</p>
+        </div>
+        <a href="{% url 'inventory_add' %}" class="btn-primary">
+            <i class="uil uil-plus"></i> Add Item
+        </a>
+    </div>
+
+    <div class="stats-row-4">
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Total Items</span>
+                <span class="stat-value">{{ total_items }}</span>
+            </div>
+            <div class="stat-icon icon-blue"><i class="uil uil-box"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Low Stock</span>
+                <span class="stat-value">{{ low_stock_count }}</span>
+            </div>
+            <div class="stat-icon icon-orange"><i class="uil uil-arrow-down"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Out of Stock</span>
+                <span class="stat-value">{{ out_of_stock_count }}</span>
+            </div>
+            <div class="stat-icon icon-red"><i class="uil uil-exclamation-circle"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text">
+                <span class="stat-label">Total Value</span>
+                <span class="stat-value">${{ total_value }}</span>
+            </div>
+            <div class="stat-icon icon-green"><i class="uil uil-check-circle"></i></div>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-tabs">
+            <a href="?category=all" class="filter-tab {% if category_filter == 'all' %}active{% endif %}">All</a>
+            <a href="?category=ppe" class="filter-tab {% if category_filter == 'ppe' %}active{% endif %}">PPE</a>
+            <a href="?category=medical_supplies" class="filter-tab {% if category_filter == 'medical_supplies' %}active{% endif %}">Medical Supplies</a>
+            <a href="?category=equipment" class="filter-tab {% if category_filter == 'equipment' %}active{% endif %}">Equipment</a>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Inventory Items</h3>
+            <p>Total items: {{ items|length }}</p>
+        </div>
+        <div style="overflow-x:auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Item Name</th><th>Category</th><th>Quantity</th><th>Min Stock</th>
+                    <th>Unit Price</th><th>Total Value</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td class="cell-strong">{{ item.name }}</td>
+                    <td class="cell-muted">{{ item.get_category_display }}</td>
+                    <td class="cell-muted">{{ item.quantity }}</td>
+                    <td class="cell-muted">{{ item.min_stock }}</td>
+                    <td class="cell-muted">${{ item.unit_price }}</td>
+                    <td class="cell-muted">${{ item.total_value }}</td>
+                    <td>
+                        {% if item.status == "in_stock" %}
+                            <span class="badge badge-green">In Stock</span>
+                        {% elif item.status == "low_stock" %}
+                            <span class="badge badge-yellow">Low Stock</span>
+                        {% else %}
+                            <span class="badge badge-red">Out of Stock</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <a href="{% url 'inventory_edit' item.pk %}" class="action-edit" title="Edit"><i class="uil uil-pen"></i></a>
+                            <form method="post" action="{% url 'inventory_delete' item.pk %}" onsubmit="return confirm('Delete this item?');" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="action-delete" title="Delete"><i class="uil uil-trash-alt"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="cell-muted" style="text-align:center; padding:30px;">No items found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

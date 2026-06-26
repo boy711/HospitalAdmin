@@ -1,0 +1,68 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    <div class="page-header">
+        <h1>{{ action }} Staff Member</h1>
+        <p>{% if action == "Add" %}Add a new staff member to the directory{% else %}Update staff information{% endif %}</p>
+    </div>
+
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group">
+                    <label>Title</label>
+                    {{ form.title }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Role</label>
+                    {{ form.role }}
+                </div>
+                <div class="form-group">
+                    <label>Department</label>
+                    {{ form.department }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    {{ form.phone }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Start Date</label>
+                    {{ form.start_date }}
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    {{ form.status }}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Staff Member</button>
+                <a href="{% url 'staffmanagement' %}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

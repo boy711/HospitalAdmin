@@ -1,0 +1,74 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Billing - MedCenter{% endblock %}
+
+{% block dash_content %}
+<div class="dash-content">
+    {% if messages %}{% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}{% endif %}
+
+    <div class="page-header-row">
+        <div class="page-header">
+            <h1>Billing & Payments</h1>
+            <p>Manage invoices and patient payments</p>
+        </div>
+        <a href="{% url 'invoice_add' %}" class="btn-primary">
+            <i class="uil uil-dollar-sign"></i> Create Invoice
+        </a>
+    </div>
+
+    <div class="stats-row-4">
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Total Revenue</span><span class="stat-value">${{ total_revenue }}</span></div>
+            <div class="stat-icon icon-green"><i class="uil uil-dollar-sign"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Pending Payments</span><span class="stat-value">${{ pending_amount }}</span></div>
+            <div class="stat-icon icon-blue"><i class="uil uil-clock"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Overdue Amount</span><span class="stat-value">${{ overdue_amount }}</span></div>
+            <div class="stat-icon icon-orange"><i class="uil uil-exclamation-circle"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Paid Invoices</span><span class="stat-value">{{ paid_count }}</span></div>
+            <div class="stat-icon icon-purple"><i class="uil uil-check-circle"></i></div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Invoices</h3>
+            <p>Patient billing records</p>
+        </div>
+
+        {% for invoice in invoices %}
+        <div class="staff-row">
+            <div class="staff-row-info">
+                <div class="staff-row-name">{{ invoice.invoice_number }}</div>
+                <div class="staff-row-meta">{{ invoice.patient.name }}</div>
+            </div>
+            <div class="staff-row-contact">
+                <span>{{ invoice.date|date:"Y-m-d" }}</span>
+            </div>
+            <div>
+                <span style="font-weight:600; color:var(--text-color);">${{ invoice.amount }}</span>
+            </div>
+            <div class="staff-row-status">
+                {% if invoice.status == "paid" %}
+                    <span class="badge badge-green">Paid</span>
+                {% elif invoice.status == "pending" %}
+                    <span class="badge badge-blue">Pending</span>
+                {% else %}
+                    <span class="badge badge-red">Overdue</span>
+                {% endif %}
+            </div>
+            <form method="post" action="{% url 'invoice_delete' invoice.pk %}" onsubmit="return confirm('Delete this invoice?');">
+                {% csrf_token %}
+                <button type="submit" class="action-delete" title="Delete"><i class="uil uil-trash-alt"></i></button>
+            </form>
+        </div>
+        {% empty %}
+        <p class="cell-muted" style="text-align:center; padding:30px;">No invoices found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

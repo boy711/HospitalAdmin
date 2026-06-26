@@ -1,0 +1,71 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Medical Records - MedCenter{% endblock %}
+
+{% block dash_content %}
+<div class="dash-content">
+    {% if messages %}{% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}{% endif %}
+
+    <div class="page-header-row">
+        <div class="page-header">
+            <h1>Medical Records</h1>
+            <p>View and manage patient medical records</p>
+        </div>
+        <a href="{% url 'medicalrecord_add' %}" class="btn-primary">
+            <i class="uil uil-file-medical"></i> New Record
+        </a>
+    </div>
+
+    <div class="stats-row-4">
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Total Records</span><span class="stat-value">{{ total_records }}</span></div>
+            <div class="stat-icon icon-blue"><i class="uil uil-file-medical"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Filed</span><span class="stat-value">{{ filed_count }}</span></div>
+            <div class="stat-icon icon-green"><i class="uil uil-check-circle"></i></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-text"><span class="stat-label">Pending Review</span><span class="stat-value">{{ pending_count }}</span></div>
+            <div class="stat-icon icon-orange"><i class="uil uil-clock"></i></div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Patient Medical Records</h3>
+            <p>Complete medical documentation</p>
+        </div>
+
+        {% for record in records %}
+        <div class="staff-row">
+            <div style="display:flex; align-items:center; gap:14px; flex:1;">
+                <div style="width:36px; height:36px; border-radius:8px; background:var(--primary-color); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <i class="uil uil-file-medical" style="color:#fff; font-size:18px;"></i>
+                </div>
+                <div class="staff-row-info">
+                    <div class="staff-row-name">{{ record.patient.name }}</div>
+                    <div class="staff-row-meta">{{ record.get_record_type_display }}</div>
+                </div>
+            </div>
+            <div class="staff-row-contact">
+                <span>{{ record.date|date:"Y-m-d" }}</span>
+                <span>{% if record.doctor %}{{ record.doctor.name }}{% else %}—{% endif %}</span>
+            </div>
+            <div class="staff-row-status">
+                {% if record.status == "filed" %}
+                    <span class="badge badge-green">Filed</span>
+                {% else %}
+                    <span class="badge badge-yellow">Pending</span>
+                {% endif %}
+            </div>
+            <form method="post" action="{% url 'medicalrecord_delete' record.pk %}" onsubmit="return confirm('Delete this record?');">
+                {% csrf_token %}
+                <button type="submit" class="action-delete" title="Delete"><i class="uil uil-trash-alt"></i></button>
+            </form>
+        </div>
+        {% empty %}
+        <p class="cell-muted" style="text-align:center; padding:30px;">No records found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

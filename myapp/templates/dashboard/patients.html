@@ -1,0 +1,86 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block dash_content %}
+<div class="dash-content">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="page-header-row">
+        <div class="page-header">
+            <h1>Patient Management</h1>
+            <p>Manage all patient records and information</p>
+        </div>
+        <a href="{% url 'patient_add' %}" class="btn-primary">
+            <i class="uil uil-plus"></i> Add Patient
+        </a>
+    </div>
+
+    <div class="filter-card">
+        <form method="get" class="filter-search">
+            <i class="uil uil-search"></i>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search patients by name or email...">
+        </form>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Patient Records</h3>
+            <p>Total patients: {{ total_patients }}</p>
+        </div>
+
+        <div style="overflow-x:auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Age</th>
+                    <th>Blood Type</th>
+                    <th>Last Visit</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td class="cell-strong">{{ patient.name }}</td>
+                    <td class="cell-muted">{{ patient.email }}</td>
+                    <td class="cell-muted">{{ patient.phone }}</td>
+                    <td class="cell-muted">{{ patient.age }}</td>
+                    <td><span class="badge badge-blue">{{ patient.blood_type }}</span></td>
+                    <td class="cell-muted">{{ patient.last_visit|date:"Y-m-d" }}</td>
+                    <td>
+                        {% if patient.status == "active" %}
+                            <span class="badge badge-green">Active</span>
+                        {% else %}
+                            <span class="badge badge-gray">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <a href="{% url 'patient_detail' patient.pk %}" class="action-view" title="View"><i class="uil uil-eye"></i></a>
+                            <a href="{% url 'patient_edit' patient.pk %}" class="action-edit" title="Edit"><i class="uil uil-pen"></i></a>
+                            <form method="post" action="{% url 'patient_delete' patient.pk %}" onsubmit="return confirm('Delete this patient?');" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="action-delete" title="Delete"><i class="uil uil-trash-alt"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="cell-muted" style="text-align:center; padding:30px;">No patients found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

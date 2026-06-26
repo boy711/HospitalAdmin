@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}">
+    <title>Login - MedCenter</title>
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--panel-color); }
+        .login-card { background: var(--panel-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 40px; width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+        .login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+        .login-logo span { font-size: 22px; font-weight: 600; color: var(--text-color); }
+        .login-logo .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
+        .login-card h2 { font-size: 22px; font-weight: 600; color: var(--text-color); margin-bottom: 6px; }
+        .login-card p { font-size: 13px; color: var(--black-light-color); margin-bottom: 28px; }
+        .error-msg { background: #FEE2E2; color: #dc2626; border: 1px solid #fca5a5; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <div class="login-logo">
+        <div class="avatar"><i class="uil uil-hospital"></i></div>
+        <span>MedCenter</span>
+    </div>
+    <h2>Welcome back</h2>
+    <p>Sign in to your administrator account</p>
+
+    {% if form.errors %}
+        <div class="error-msg">Invalid username or password. Please try again.</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" autofocus placeholder="Enter your username">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter your password">
+        </div>
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:8px;">
+            <i class="uil uil-sign-in-alt"></i> Sign In
+        </button>
+    </form>
+</div>
+</body>
+</html>

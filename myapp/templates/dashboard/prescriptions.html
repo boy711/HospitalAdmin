@@ -1,0 +1,81 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Prescriptions - MedCenter{% endblock %}
+
+{% block dash_content %}
+<div class="dash-content">
+    {% if messages %}{% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}{% endif %}
+
+    <div class="page-header-row">
+        <div class="page-header">
+            <h1>Prescriptions</h1>
+            <p>Manage patient medications and prescriptions</p>
+        </div>
+        <a href="{% url 'prescription_add' %}" class="btn-primary">
+            <i class="uil uil-plus"></i> New Prescription
+        </a>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-tabs">
+            <a href="?status=active" class="filter-tab {% if status_filter == 'active' %}active{% endif %}">Active</a>
+            <a href="?status=completed" class="filter-tab {% if status_filter == 'completed' %}active{% endif %}">Completed</a>
+            <a href="?status=expired" class="filter-tab {% if status_filter == 'expired' %}active{% endif %}">Expired</a>
+            <a href="?status=all" class="filter-tab {% if status_filter == 'all' %}active{% endif %}">All</a>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <h3>Prescription Records</h3>
+            <p>Total: {{ prescriptions|length }}</p>
+        </div>
+        <div style="overflow-x:auto;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Rx ID</th>
+                    <th>Patient</th>
+                    <th>Medication</th>
+                    <th>Dosage</th>
+                    <th>Frequency</th>
+                    <th>Duration</th>
+                    <th>Prescribed By</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rx in prescriptions %}
+                <tr>
+                    <td class="cell-muted">RX-{{ rx.pk|stringformat:"03d" }}</td>
+                    <td class="cell-strong">{{ rx.patient.name }}</td>
+                    <td class="cell-strong">{{ rx.medication }}</td>
+                    <td class="cell-muted">{{ rx.dosage }}</td>
+                    <td class="cell-muted">{{ rx.get_frequency_display }}</td>
+                    <td class="cell-muted">{{ rx.duration }}</td>
+                    <td class="cell-muted">{% if rx.doctor %}Dr. {{ rx.doctor.name }}{% else %}—{% endif %}</td>
+                    <td>
+                        {% if rx.status == "active" %}
+                            <span class="badge badge-green">Active</span>
+                        {% elif rx.status == "completed" %}
+                            <span class="badge badge-blue">Completed</span>
+                        {% else %}
+                            <span class="badge badge-gray">Expired</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'prescription_delete' rx.pk %}" onsubmit="return confirm('Delete this prescription?');" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="action-delete" title="Delete"><i class="uil uil-trash-alt"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="9" class="cell-muted" style="text-align:center; padding:30px;">No prescriptions found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
